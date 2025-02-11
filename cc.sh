@@ -8,10 +8,15 @@ PB_DIR="./pb"
 mkdir -p $PB_DIR
 
 # 查找所有 .proto 文件并编译
-for proto_file in $PROTO_DIR/*.proto; do
+for proto_file in $(find $PROTO_DIR -name "*.proto"); do
     if [ -f "$proto_file" ]; then
         echo "Compiling $proto_file..."
-        protoc --go_out=$PB_DIR "$proto_file"
+
+        # 使用绝对路径调用 protoc-gen-go 和 protoc-gen-go-grpc
+        protoc --proto_path=$PROTO_DIR \
+               --go_out=$PB_DIR \
+               --go-grpc_out=$PB_DIR \
+               "$proto_file"
     fi
 done
 

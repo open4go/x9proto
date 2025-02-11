@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package payment;
+
+// 指定生成的 Go 包路径
+option go_package = "./payment";
+
+// 微信支付服务
+service PayService {
+  // 预支付接口
+  rpc PreparePayment(PayRequest) returns (WxPayPrepare);
+}
+
+
+
+// 订单来源
+enum OrderFrom {
+  ORDER_FROM_UNSPECIFIED = 0; // 未指定
+  // 其他订单来源可以在这里定义
+}
+
+// 订单状态
+enum OrderStatus {
+  ORDER_STATUS_UNSPECIFIED = 0; // 未指定
+  ORDER_INIT = 1; // 订单初始化（未完成支付）
+  ORDER_PAID = 2; // 订单已付款
+  ORDER_MAKING = 3; // 订单制作中
+  ORDER_PRODUCE_COMPLETED = 4; // 订单制作完成
+  ORDER_COMPLETED = 5; // 订单完成（已经自提/堂食配送完成）
+  ORDER_CANCEL_REJECTED = 6; // 拒绝取消
+  ORDER_CANCEL = 7; // 订单取消
+  ORDER_CANCEL_APPROVED = 8; // 订单取消（商家同意）
+  ORDER_CANCEL_COMPLETED = 9; // 订单取消（完成）已经退款
+  ORDER_TAKEOUT_PENDING = 10; // 外卖（等待接单）
+  ORDER_TAKEOUT_CONFIRMED = 11; // 外卖（已经接单）
+  ORDER_TAKEOUT_UNCONFIRMED = 12; // 外卖（放弃接单）
+  ORDER_TAKEOUT_TAKE = 13; // 外卖（已经取货）
+  ORDER_TAKEOUT_DONE = 14; // 外卖（已经送达）
+  ORDER_TAKEOUT_COMMENT = 15; // 订单已经评论
+  ORDER_CLOSED = 16; // 订单关闭（超时未支付的订单会被关闭）
+  ORDER_REFUND_APPLY = 17; // 申请退款
+  ORDER_REFUNDED = 18; // 申请退款成功
+}
+
+// 支付请求
+message PayRequest {
+  OrderStatus status = 1; // 订单状态
+  string order_id = 2; // 订单号
+  string desc = 3; // 订单描述
+  int64 amount = 4; // 金额（单位：分）
+  string at = 5; // 订单发生地点（门店ID；渠道：微信；...）
+}
+
+// 微信预支付响应
+message WxPayPrepare {
+  string appid = 1;       // 应用ID
+  string noncestr = 2;    // 随机字符串
+  string package = 3;     // 订单详情扩展字符串
+  string partnerid = 4;   // 商户号
+  string prepayid = 5;    // 预支付ID
+  string timestamp = 6;    // 时间戳
+  string sign = 7;        // 签名
+  string order_id = 8;    // 订单ID
+}
+
