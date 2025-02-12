@@ -1,0 +1,182 @@
+syntax = "proto3";
+
+package order;
+
+// 指定生成的 Go 包路径
+option go_package = "./order";
+
+// 订单服务
+service OrderService {
+  // 订单详情信息
+  rpc FetchOrderDetail(OrderRequest) returns (OrderDetailRsp);
+  // 订单支付信息
+  rpc FetchOrderPaymentInfo(OrderRequest) returns (OrderPaymentRsp);
+  // 订单身份信息
+  rpc FetchOrderIdentityInfo(OrderRequest) returns (IdentityInfo);
+}
+
+// 订单信息查请求
+message OrderRequest {
+  string order_id = 1; // 订单号
+}
+
+// 订单信息详情
+message OrderDetailRsp {
+  string id = 1; // 订单唯一标识
+  SourceType source = 2; // 订单来源
+  PickUpType pick = 3; // 取货方式
+  StatusTimePoint stp = 4; // 订单状态时间节点
+  OrderStatus status = 5; // 状态
+  IdentityInfo identity = 6; // 订单标识信息
+  CustomerInfo customer = 7; // 客户信息
+  MerchantInfo merchant = 8; // 商户信息
+  repeated Buckets buckets = 9; // 商品列表
+  PriceInfo price = 11; // 价格信息
+  repeated WorkflowInfo workflow = 12; // 订单变更时间
+  repeated RefundApply refund = 13; // 退款申请
+}
+
+// 订单信息详情
+message OrderPaymentRsp {
+  string id = 1; // 订单唯一标识
+  SourceType source = 2; // 订单来源
+  PickUpType pick = 3; // 取货方式
+  StatusTimePoint stp = 4; // 订单状态时间节点
+  OrderStatus status = 5; // 状态
+  IdentityInfo identity = 6; // 订单标识信息
+  CustomerInfo customer = 7; // 客户信息
+  MerchantInfo merchant = 8; // 商户信息
+  PriceInfo price = 11; // 价格信息
+}
+
+// 标识信息
+message IdentityInfo {
+  string remark = 1; // 备注信息
+  string postscript = 2; // 脚注信息
+  string sort_num = 3; // 排队序号
+  string order_no = 4; // 订单号
+  string table_no = 5; // 座位号
+  int64 current_pos = 6; // 当前排队号
+}
+
+// 价格信息
+message PriceInfo {
+  string original_price = 1; // 原价
+  string sale_price = 2; // 特惠价
+  string reduced_price = 3; // 减价
+  string retail_price = 4; // 零售价
+  int64 pay_price = 5; // 支付金额
+  double real_price = 6; // 待支付金额
+}
+
+// 订单状态时间节点
+message StatusTimePoint {
+  int64 created_at = 1; // 订单创建时间
+  int64 pay_at = 2; // 支付中时间
+  int64 payed_at = 3; // 支付成功时间
+  int64 review_at = 4; // 评价时间
+  int64 completed_at = 5; // 完成时间
+  int64 closed_at = 6; // 关闭订单时间
+}
+
+// 客户信息
+message CustomerInfo {
+  string mobile = 1; // 客户手机号
+  string name = 2; // 客户姓名
+  string id = 3; // 客户ID
+  string account = 4; // 客户账户
+  string avatar = 5; // 客户头像
+}
+
+// 商户信息
+message MerchantInfo {
+  string mobile = 1; // 商户手机号
+  string name = 2; // 商户名称
+  string id = 3; // 商户ID
+  string address = 4; // 商户地址
+  LBSInfo lbs = 5; // 地理位置信息
+}
+
+// 地理位置信息
+message LBSInfo {
+  double longitude = 1; // 经度
+  double latitude = 2; // 纬度
+}
+
+// 商品信息
+message Buckets {
+  string id = 1; // 商品ID
+  string name = 2; // 商品名称
+  int32 number = 3; // 商品数量
+  double price = 4; // 商品单价
+  string origin_amount = 5; // 原始价格
+  string unit = 6; // 商品单位
+  repeated int32 props = 8; // 属性ID列表
+  string props_text = 9; // 属性简述
+  string image = 10; // 商品图片
+  repeated PropsItemInfo props_item = 11; // 属性参数
+}
+
+// 操作记录
+message WorkflowInfo {
+  string label = 1; // 标签
+  string description = 2; // 描述
+  string operator = 3; // 操作人
+  string operator_id = 4; // 操作人ID
+}
+
+// 属性参数信息
+message PropsItemInfo {
+  int32 is_default = 1; // 是否默认
+  int32 id = 2; // 属性ID
+  string code = 3; // 属性代码
+  string value = 4; // 属性值
+  int32 price = 5; // 属性价格
+}
+
+// 退款申请记录
+message RefundApply {
+  string id = 1; // 申请单ID
+  RefundReasonType type = 2; // 申请单类型
+  RefundStatus status = 3; // 申请状态
+  string audit = 4; // 审批类型
+  string reason = 5; // 退款原因
+  int64 amount = 6; // 退款金额
+  string operator = 7; // 处理人
+  string operator_id = 8; // 操作人ID
+  string applier = 9; // 申请发起人ID
+  RefundType applier_type = 10; // 发起人类型
+  int64 created_at = 11; // 创建时间
+}
+
+// 其他类型定义
+enum SourceType {
+  SOURCE_UNSPECIFIED = 0;
+  // 其他订单来源类型
+}
+
+enum PickUpType {
+  PICKUP_UNSPECIFIED = 0;
+  // 其他取货方式类型
+}
+
+enum OrderStatus {
+  STATUS_UNSPECIFIED = 0;
+  // 其他订单状态
+}
+
+enum RefundReasonType {
+  REASON_UNSPECIFIED = 0;
+  // 其他退款原因类型
+}
+
+enum RefundStatus {
+  STATUS_PENDING = 0; // 待处理
+  STATUS_APPROVED = 1; // 已审批
+  STATUS_COMPLETED = 2; // 已完成
+}
+
+enum RefundType {
+  TYPE_USER = 0; // 用户类型
+  TYPE_MERCHANT = 1; // 商户类型
+}
