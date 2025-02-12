@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package merchant;
+
+// 指定生成的 Go 包路径
+option go_package = "./merchant";
+
+// 金融服务
+service FianceService {
+  // 获取商户详情
+  rpc FetchMerchantDetail(FianceKeyRequest) returns (FianceKeyRsp);
+  // 获取商户密钥&打印机
+  rpc FetchMerchantFinance(FianceKeyRequest) returns (FinanceKeyInfo);
+}
+
+// 订单信息查请求
+message FianceKeyRequest {
+  string merchant_id = 1; // 订单号
+}
+
+// 门店信息模型
+message FianceKeyRsp {
+  string id = 1; // 门店唯一标识
+  string category = 2; // 分类/分组
+  bool best_match = 3; // 最匹配的门店
+  int32 status = 4; // 门店状态
+  string store_id = 5; // 门店ID
+  string name = 6; // 门店名称
+  double distance = 7; // 距离
+  string shop_time = 8; // 营业时间
+  ShopTimeSetting shop_time_info = 9; // 门店营业时间
+  string call_number = 10; // 门店电话
+  LbsInfo lbs = 11; // 地址信息
+  repeated string product = 12; // 当前门店拥有的产品
+  repeated Qrcode table_qrcodes = 13; // 餐桌二维码
+  repeated MenuConfig menu_list = 14; // 菜单列表
+  repeated string menus = 15; // 菜单ID列表
+  repeated Printer printer_conf = 16; // 打印机列表
+  FinanceConfig finance = 17; // 财务主体
+  TypeInfo st = 18; // 门店类型属性设置
+  repeated SeatConfig seat = 19; // 座位配置
+  repeated string manager = 20; // 当前门店的管理员
+}
+
+// 财务信息
+message FinanceKeyInfo {
+  FinanceConfig key = 1; // 开始时间
+  Printer printer = 2; // 结束时间
+}
+
+// 地址信息
+message LbsInfo {
+  string address = 1; // 地址
+  double longitude = 2; // 经度
+  double latitude = 3; // 纬度
+  string area_name = 4; // 区域名称
+}
+
+// 营业时间
+message ShopTimeSetting {
+  string begin_time = 1; // 开始时间
+  string end_time = 2; // 结束时间
+}
+
+// 门店类型信息
+message TypeInfo {
+  BusinessOperationModel bom = 1; // 商业运营模式
+  OpenScale os = 2; // 门店规模
+}
+
+// 财务配置
+message FinanceConfig {
+  string wx_pay = 1; // 微信支付
+  string bank_pay = 2; // 银行支付
+}
+
+// 菜单配置
+message MenuConfig {
+  int32 sales = 1; // 销量
+  int32 stock = 2; // 库存
+  string menu_id = 3; // 菜单ID
+}
+
+// 打印机配置
+message Printer {
+  string remark = 1; // 备注
+  string printer_id = 2; // 打印机ID
+  string tpl_id = 3; // 模板ID
+  bool enabled = 4; // 是否启用
+}
+
+// 座位配置
+message SeatConfig {
+  string name = 1; // 名称
+  string id = 3; // ID
+  string type = 4; // 类型
+  string background = 5; // 背景图
+  string rate = 6; // 使用率
+}
+
+// 商业运营模式的枚举类型
+enum BusinessOperationModel {
+  COMPANY_OWNED = 0; // 直营模式
+  FRANCHISE = 1; // 加盟模式
+  LICENSING = 2; // 特许经营模式
+  AGENCY = 3; // 代理商模式
+  DISTRIBUTION = 4; // 分销模式
+  PARTNERSHIP = 5; // 合作伙伴关系
+  JOINT_VENTURE = 6; // 联营模式
+}
+
+// 门店规模的枚举
+enum OpenScale {
+  SMALL = 0; // 小型门店
+  MEDIUM = 1; // 中型门店
+  LARGE = 2; // 大型门店
+}
+
+// 二维码信息
+message Qrcode {
+  string code = 1; // 二维码内容
+  string type = 2; // 二维码类型
+}
