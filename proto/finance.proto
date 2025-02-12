@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package finance;
+
+// 指定生成的 Go 包路径
+option go_package = "./finance";
+
+// 订单服务
+service FinanceService {
+  // 订单详情信息
+  rpc FetchFinanceKey(FianceRequest) returns (FianceKeyRsp);
+}
+
+// 订单信息查请求
+message FianceRequest {
+  string finance_key_id = 1; // 订单号
+}
+
+// 商品信息模型
+message FianceKeyRsp {
+  string id = 1; // 商品唯一标识
+  string name = 2; // 密钥名称
+  string private = 3; // 密钥
+  string type = 4; // 密钥类型
+  Merchant merchant_conf = 5; // 商户配置
+  bool enabled = 6; // 是否启用
+  PayUnit unit = 7; // 支付单位
+}
+
+// 商户配置
+message Merchant {
+  string merchant_id = 1; // 商户ID
+  string merchant_cert_sn = 2; // 商户序列号
+  string merchant_api_key = 3; // 接口key
+  string app_id = 4; // 应用ID
+  string callback = 5; // 回调地址
+}
+
+// 支付单位
+enum PayUnit {
+  PAY_UNIT_UNSPECIFIED = 0; // 未指定
+  PAY_UNIT_CENT = 1; // 分
+  PAY_UNIT_YUAN = 2; // 元
+}
