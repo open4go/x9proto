@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package cst;
+
+// 指定生成的 Go 包路径
+option go_package = "./cst";
+
+// Enum for payment channel types
+enum ChannelType {
+  CHANNEL_UNKNOWN = 0;
+  CHANNEL_WX = 1;  // WeChat
+  CHANNEL_ALIPAY = 2;  // Alipay
+  // Add other channels as needed
+}
+
+// Enum for payment methods
+enum PayMethod {
+  METHOD_UNKNOWN = 0;
+  METHOD_CREDIT_CARD = 1;  // Credit Card
+  METHOD_PAYPAL = 2;  // PayPal
+  // Add other payment methods as needed
+}
+
+// Enum for payment status
+enum PayStatus {
+  STATUS_UNKNOWN = 0;
+  STATUS_PENDING = 1;  // Pending Payment
+  STATUS_COMPLETED = 2;  // Payment Completed
+  STATUS_REFUNDING = 3;  // Refund In Process
+  STATUS_REFUNDED = 4;  // Refunded
+  // Add other statuses as needed
+}
