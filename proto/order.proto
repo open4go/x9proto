@@ -5,8 +5,6 @@ package order;
 // 指定生成的 Go 包路径
 option go_package = "./order";
 
-import "payment_info.proto"; // Assuming cst.ChannelType and cst.PayMethod are defined in cst.proto
-
 
 // 订单服务
 service OrderService {
@@ -50,7 +48,6 @@ message OrderPaymentRsp {
   CustomerInfo customer = 7; // 客户信息
   MerchantInfo merchant = 8; // 商户信息
   PriceInfo price = 11; // 价格信息
-  payment_info.PayInfo  pay_info= 12; // 价格信息
 }
 
 // 标识信息
