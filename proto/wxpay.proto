@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package wxpay;
+
+// 指定生成的 Go 包路径
+option go_package = "./wxpay";
+
+// 订单服务
+service WxPayService {
+  // 订单详情信息
+  rpc FetchOrderPayInfo(WxPayQueryRequest) returns (WxPayQueryResponse);
+}
+
+// 定义请求消息结构
+message WxPayQueryRequest {
+  string appid = 1;               // 公众账号ID
+  string mch_id = 2;              // 商户号
+  string nonce_str = 3;           // 随机字符串
+  string transaction_id = 4;      // 微信支付订单号
+  string sign = 5;                // 签名
+}
+
+// 定义响应消息结构
+message WxPayQueryResponse {
+  string return_code = 1;         // 返回状态
+  string return_msg = 2;          // 返回信息
+  string appid = 3;               // 公众账号ID
+  string mch_id = 4;              // 商户号
+  string device_info = 5;         // 设备号
+  string nonce_str = 6;           // 随机字符串
+  string sign = 7;                // 签名
+  string result_code = 8;         // 业务结果
+  string openid = 9;              // 用户标识
+  string is_subscribe = 10;       // 用户是否关注
+  string trade_type = 11;         // 交易类型
+  string bank_type = 12;          // 银行类型
+  int32 total_fee = 13;           // 总金额
+  string fee_type = 14;           // 货币类型
+  string transaction_id = 15;     // 微信支付订单号
+  string out_trade_no = 16;       // 商户订单号
+  string attach = 17;             // 附加数据
+  string time_end = 18;           // 交易完成时间
+  string trade_state = 19;        // 交易状态
+}
