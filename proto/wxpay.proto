@@ -18,6 +18,7 @@ message WxPayQueryRequest {
   string nonce_str = 3;           // 随机字符串
   string transaction_id = 4;      // 微信支付订单号
   string sign = 5;                // 签名
+  string app_secret = 6;          // 密钥
 }
 
 // 定义响应消息结构
