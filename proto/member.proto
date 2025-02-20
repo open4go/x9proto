@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package member; // 替换为您的包名
+
+// 指定生成的 Go 包路径
+option go_package = "./member";
+
+// 注册会员请求消息
+message RegisterMemberRequest {
+  string openid = 1; // 用户的 OpenID
+  string appid = 2;  // 应用 ID
+  string mch_id = 3; // 商户 ID
+  string additional_info = 4; // 可选的附加信息
+}
+
+// 注册会员响应消息
+message RegisterMemberResponse {
+  bool success = 1;        // 注册是否成功
+  string message = 2;      // 反馈信息
+  string user_id = 3;    // 新注册会员的 ID（如果成功）
+}
+
+// 注册会员服务
+service MembershipService {
+  rpc RegisterMember(RegisterMemberRequest) returns (RegisterMemberResponse);
+}
