@@ -5,12 +5,49 @@ package member; // 替换为您的包名
 // 指定生成的 Go 包路径
 option go_package = "./member";
 
-// 注册会员请求消息
-message RegisterMemberRequest {
+import "google/protobuf/timestamp.proto"; // 用于时间戳
+
+
+// 注册会员服务
+service MembershipService {
+
+  // 注册
+  rpc RegisterMember(RegisterMemberRequest) returns (RegisterMemberResponse);
+
+  // 获取会员详情
+  rpc FetchMemberByID(FetchByIDRequest) returns (MemberDetail);
+
+  // 获取会员详情
+  rpc FetchMemberByOpenID(FetchByThirdPartyRequest) returns (MemberDetail);
+
+  // 获取身份信息
+  rpc FetchMemberIdentityInfo(FetchByThirdPartyRequest) returns (IdentityInfo);
+}
+
+// FetchByIDRequest 会员id
+message FetchByIDRequest {
+  string id = 1; // 用户的ID
+}
+
+// FetchByThirdPartyRequest 三方信息
+message FetchByThirdPartyRequest {
+  string openid = 1; // 用户的 OpenID
+}
+
+
+// ThirdPartyInfo 三方信息
+message ThirdPartyInfo {
   string openid = 1; // 用户的 OpenID
   string appid = 2;  // 应用 ID
   string mch_id = 3; // 商户 ID
-  string additional_info = 4; // 可选的附加信息
+  string platform = 4; // 三方平台名称（如 WeChat, Alipay 等）
+  string union_id = 5; // 联合 ID（如果适用）
+}
+
+// 注册会员请求消息
+message RegisterMemberRequest {
+  ThirdPartyInfo third_party = 1;
+  string additional_info = 2; // 可选的附加信息
 }
 
 // 注册会员响应消息
@@ -20,7 +57,92 @@ message RegisterMemberResponse {
   string user_id = 3;    // 新注册会员的 ID（如果成功）
 }
 
-// 注册会员服务
-service MembershipService {
-  rpc RegisterMember(RegisterMemberRequest) returns (RegisterMemberResponse);
+
+// MemberDetail 会员详情信息
+message MemberDetail {
+  string id = 1; // 用户 ID
+  UserFrom source = 2; // 用户来源
+  IdentityInfo identity = 3; // 客户信息
+  LoginInfo login = 4; // 登录审计信息
+  AssetsInfo assets = 5; // 个人资产
+  InviterInfo invitee = 6; // 当前邀请人情况
+  PermissionInfo permission = 7; // 权限管理
+  ThirdPartyInfo third_party = 8;
+  MemberStatus status = 9;
+}
+
+// IdentityInfo 标识信息
+message IdentityInfo {
+  string account_id = 1; // 备注信息
+  string nickname = 2; // 昵称
+  string user_name = 3; // 用户名
+  string birthday = 4; // 生日
+  google.protobuf.Timestamp join_at = 5; // 加入时间（注册时间）
+  UserGender gender = 6; // 性别
+  string wx_login_id = 7; // 微信登录信息
+  string phone = 8; // 手机号
+  string register_ip = 9; // 注册 IP
+  string register_area = 10; // 注册地区
+  string avatar = 11; // 头像
+}
+
+// LoginInfo 登录信息
+message LoginInfo {
+  uint64 times = 1; // 登录时长
+  uint64 counter = 2; // 登录次数
+  int64 last_login_at = 3; // 上次登录时间
+  int64 login_at = 4; // 当前登录时间
+  string login_ip = 5; // 当前登录 IP
+  string last_login_ip = 6; // 上次登录 IP
+}
+
+// PermissionInfo 权限信息
+message PermissionInfo {
+  uint64 access = 1; // 权限等级
+  repeated uint64 access_bits = 2; // 登录次数（不存储）
+  bool is_internal_staff = 3; // 是否内部员工
+}
+
+// AssetsInfo 资产信息
+message AssetsInfo {
+  int32 point_num = 1; // 点数
+  int32 coupon_num = 2; // 积分
+  double balance = 3; // 余额
+  int32 gift_balance = 4; // 礼物
+}
+
+// InviterInfo 邀请人信息
+message InviterInfo {
+  int32 current_value = 1; // 当前阶段已完成度
+  int32 need_value = 2; // 当前阶段还需完成值
+  int32 turn = 3; // 邀请人数要求完成次数/每轮
+  int32 total = 4; // 总共完成
+  repeated string invitee = 5; // 被邀请人 ID 列表
+  string inviter = 6; // 邀请人 ID
+}
+
+// UserFrom 用户来源的枚举
+enum UserFrom {
+  UNKNOWN = 0; // 未知来源
+  SOURCE_A = 1; // 来源 A
+  SOURCE_B = 2; // 来源 B
+  // 其他来源可以根据需要添加
+}
+
+// UserGender 用户性别的枚举
+enum UserGender {
+  GENDER_UNKNOWN = 0; // 未知性别
+  MALE = 1; // 男性
+  FEMALE = 2; // 女性
+  // 其他性别可以根据需要添加
+}
+
+// MemberStatus 会员状态的枚举
+enum MemberStatus {
+  STATUS_UNKNOWN = 0; // 未知状态
+  ACTIVE = 1;         // 活跃状态
+  INACTIVE = 2;       // 非活跃状态
+  BANNED = 3;         // 被禁用状态
+  SUSPENDED = 4;      // 暂停状态
+  // 可以根据需要添加其他状态
 }
