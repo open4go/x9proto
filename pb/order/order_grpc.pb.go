@@ -22,6 +22,7 @@ const (
 	OrderService_FetchOrderDetail_FullMethodName       = "/order.OrderService/FetchOrderDetail"
 	OrderService_FetchOrderPaymentInfo_FullMethodName  = "/order.OrderService/FetchOrderPaymentInfo"
 	OrderService_FetchOrderIdentityInfo_FullMethodName = "/order.OrderService/FetchOrderIdentityInfo"
+	OrderService_UpdateOrderStatus_FullMethodName      = "/order.OrderService/UpdateOrderStatus"
 )
 
 // OrderServiceClient is the client API for OrderService service.
@@ -36,6 +37,8 @@ type OrderServiceClient interface {
 	FetchOrderPaymentInfo(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*OrderPaymentRsp, error)
 	// 订单身份信息
 	FetchOrderIdentityInfo(ctx context.Context, in *OrderRequest, opts ...grpc.CallOption) (*IdentityInfo, error)
+	// 更新订单状态
+	UpdateOrderStatus(ctx context.Context, in *UpdateOrderStatusRequest, opts ...grpc.CallOption) (*UpdateOrderStatusResponse, error)
 }
 
 type orderServiceClient struct {
@@ -76,6 +79,16 @@ func (c *orderServiceClient) FetchOrderIdentityInfo(ctx context.Context, in *Ord
 	return out, nil
 }
 
+func (c *orderServiceClient) UpdateOrderStatus(ctx context.Context, in *UpdateOrderStatusRequest, opts ...grpc.CallOption) (*UpdateOrderStatusResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateOrderStatusResponse)
+	err := c.cc.Invoke(ctx, OrderService_UpdateOrderStatus_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OrderServiceServer is the server API for OrderService service.
 // All implementations must embed UnimplementedOrderServiceServer
 // for forward compatibility.
@@ -88,6 +101,8 @@ type OrderServiceServer interface {
 	FetchOrderPaymentInfo(context.Context, *OrderRequest) (*OrderPaymentRsp, error)
 	// 订单身份信息
 	FetchOrderIdentityInfo(context.Context, *OrderRequest) (*IdentityInfo, error)
+	// 更新订单状态
+	UpdateOrderStatus(context.Context, *UpdateOrderStatusRequest) (*UpdateOrderStatusResponse, error)
 	mustEmbedUnimplementedOrderServiceServer()
 }
 
@@ -106,6 +121,9 @@ func (UnimplementedOrderServiceServer) FetchOrderPaymentInfo(context.Context, *O
 }
 func (UnimplementedOrderServiceServer) FetchOrderIdentityInfo(context.Context, *OrderRequest) (*IdentityInfo, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FetchOrderIdentityInfo not implemented")
+}
+func (UnimplementedOrderServiceServer) UpdateOrderStatus(context.Context, *UpdateOrderStatusRequest) (*UpdateOrderStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOrderStatus not implemented")
 }
 func (UnimplementedOrderServiceServer) mustEmbedUnimplementedOrderServiceServer() {}
 func (UnimplementedOrderServiceServer) testEmbeddedByValue()                      {}
@@ -182,6 +200,24 @@ func _OrderService_FetchOrderIdentityInfo_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _OrderService_UpdateOrderStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOrderStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServiceServer).UpdateOrderStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: OrderService_UpdateOrderStatus_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServiceServer).UpdateOrderStatus(ctx, req.(*UpdateOrderStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // OrderService_ServiceDesc is the grpc.ServiceDesc for OrderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -200,6 +236,10 @@ var OrderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FetchOrderIdentityInfo",
 			Handler:    _OrderService_FetchOrderIdentityInfo_Handler,
+		},
+		{
+			MethodName: "UpdateOrderStatus",
+			Handler:    _OrderService_UpdateOrderStatus_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
