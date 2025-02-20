@@ -19,7 +19,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MembershipService_RegisterMember_FullMethodName = "/member.MembershipService/RegisterMember"
+	MembershipService_RegisterMember_FullMethodName          = "/member.MembershipService/RegisterMember"
+	MembershipService_FetchMemberByID_FullMethodName         = "/member.MembershipService/FetchMemberByID"
+	MembershipService_FetchMemberByOpenID_FullMethodName     = "/member.MembershipService/FetchMemberByOpenID"
+	MembershipService_FetchMemberIdentityInfo_FullMethodName = "/member.MembershipService/FetchMemberIdentityInfo"
 )
 
 // MembershipServiceClient is the client API for MembershipService service.
@@ -28,7 +31,14 @@ const (
 //
 // 注册会员服务
 type MembershipServiceClient interface {
+	// 注册
 	RegisterMember(ctx context.Context, in *RegisterMemberRequest, opts ...grpc.CallOption) (*RegisterMemberResponse, error)
+	// 获取会员详情
+	FetchMemberByID(ctx context.Context, in *FetchByIDRequest, opts ...grpc.CallOption) (*MemberDetail, error)
+	// 获取会员详情
+	FetchMemberByOpenID(ctx context.Context, in *FetchByThirdPartyRequest, opts ...grpc.CallOption) (*MemberDetail, error)
+	// 获取身份信息
+	FetchMemberIdentityInfo(ctx context.Context, in *FetchByThirdPartyRequest, opts ...grpc.CallOption) (*IdentityInfo, error)
 }
 
 type membershipServiceClient struct {
@@ -49,13 +59,50 @@ func (c *membershipServiceClient) RegisterMember(ctx context.Context, in *Regist
 	return out, nil
 }
 
+func (c *membershipServiceClient) FetchMemberByID(ctx context.Context, in *FetchByIDRequest, opts ...grpc.CallOption) (*MemberDetail, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MemberDetail)
+	err := c.cc.Invoke(ctx, MembershipService_FetchMemberByID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *membershipServiceClient) FetchMemberByOpenID(ctx context.Context, in *FetchByThirdPartyRequest, opts ...grpc.CallOption) (*MemberDetail, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MemberDetail)
+	err := c.cc.Invoke(ctx, MembershipService_FetchMemberByOpenID_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *membershipServiceClient) FetchMemberIdentityInfo(ctx context.Context, in *FetchByThirdPartyRequest, opts ...grpc.CallOption) (*IdentityInfo, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IdentityInfo)
+	err := c.cc.Invoke(ctx, MembershipService_FetchMemberIdentityInfo_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MembershipServiceServer is the server API for MembershipService service.
 // All implementations must embed UnimplementedMembershipServiceServer
 // for forward compatibility.
 //
 // 注册会员服务
 type MembershipServiceServer interface {
+	// 注册
 	RegisterMember(context.Context, *RegisterMemberRequest) (*RegisterMemberResponse, error)
+	// 获取会员详情
+	FetchMemberByID(context.Context, *FetchByIDRequest) (*MemberDetail, error)
+	// 获取会员详情
+	FetchMemberByOpenID(context.Context, *FetchByThirdPartyRequest) (*MemberDetail, error)
+	// 获取身份信息
+	FetchMemberIdentityInfo(context.Context, *FetchByThirdPartyRequest) (*IdentityInfo, error)
 	mustEmbedUnimplementedMembershipServiceServer()
 }
 
@@ -68,6 +115,15 @@ type UnimplementedMembershipServiceServer struct{}
 
 func (UnimplementedMembershipServiceServer) RegisterMember(context.Context, *RegisterMemberRequest) (*RegisterMemberResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterMember not implemented")
+}
+func (UnimplementedMembershipServiceServer) FetchMemberByID(context.Context, *FetchByIDRequest) (*MemberDetail, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchMemberByID not implemented")
+}
+func (UnimplementedMembershipServiceServer) FetchMemberByOpenID(context.Context, *FetchByThirdPartyRequest) (*MemberDetail, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchMemberByOpenID not implemented")
+}
+func (UnimplementedMembershipServiceServer) FetchMemberIdentityInfo(context.Context, *FetchByThirdPartyRequest) (*IdentityInfo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method FetchMemberIdentityInfo not implemented")
 }
 func (UnimplementedMembershipServiceServer) mustEmbedUnimplementedMembershipServiceServer() {}
 func (UnimplementedMembershipServiceServer) testEmbeddedByValue()                           {}
@@ -108,6 +164,60 @@ func _MembershipService_RegisterMember_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MembershipService_FetchMemberByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FetchByIDRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MembershipServiceServer).FetchMemberByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MembershipService_FetchMemberByID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MembershipServiceServer).FetchMemberByID(ctx, req.(*FetchByIDRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MembershipService_FetchMemberByOpenID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FetchByThirdPartyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MembershipServiceServer).FetchMemberByOpenID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MembershipService_FetchMemberByOpenID_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MembershipServiceServer).FetchMemberByOpenID(ctx, req.(*FetchByThirdPartyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MembershipService_FetchMemberIdentityInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FetchByThirdPartyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MembershipServiceServer).FetchMemberIdentityInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MembershipService_FetchMemberIdentityInfo_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MembershipServiceServer).FetchMemberIdentityInfo(ctx, req.(*FetchByThirdPartyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MembershipService_ServiceDesc is the grpc.ServiceDesc for MembershipService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -118,6 +228,18 @@ var MembershipService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterMember",
 			Handler:    _MembershipService_RegisterMember_Handler,
+		},
+		{
+			MethodName: "FetchMemberByID",
+			Handler:    _MembershipService_FetchMemberByID_Handler,
+		},
+		{
+			MethodName: "FetchMemberByOpenID",
+			Handler:    _MembershipService_FetchMemberByOpenID_Handler,
+		},
+		{
+			MethodName: "FetchMemberIdentityInfo",
+			Handler:    _MembershipService_FetchMemberIdentityInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
