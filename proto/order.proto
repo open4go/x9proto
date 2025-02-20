@@ -5,7 +5,6 @@ package order;
 // 指定生成的 Go 包路径
 option go_package = "./order";
 
-
 // 订单服务
 service OrderService {
   // 订单详情信息
@@ -14,6 +13,8 @@ service OrderService {
   rpc FetchOrderPaymentInfo(OrderRequest) returns (OrderPaymentRsp);
   // 订单身份信息
   rpc FetchOrderIdentityInfo(OrderRequest) returns (IdentityInfo);
+  // 更新订单状态
+  rpc UpdateOrderStatus(UpdateOrderStatusRequest) returns (UpdateOrderStatusResponse);
 }
 
 // 订单信息查请求
@@ -58,7 +59,6 @@ message IdentityInfo {
   string order_no = 4; // 订单号
   string table_no = 5; // 座位号
   int64 current_pos = 6; // 当前排队号
-  string transaction_id = 7;
 }
 
 // 价格信息
@@ -150,6 +150,21 @@ message RefundApply {
   RefundType applier_type = 10; // 发起人类型
   int64 created_at = 11; // 创建时间
 }
+
+// 更新订单状态请求
+message UpdateOrderStatusRequest {
+  string order_id = 1; // 订单号
+  OrderStatus status = 2; // 新的订单状态
+  string remark = 3; // 备注信息
+  string operator = 4; // 操作人
+}
+
+// 更新订单状态响应
+message UpdateOrderStatusResponse {
+  bool success = 1; // 是否成功
+  string message = 2; // 反馈信息
+}
+
 
 // 其他类型定义
 enum SourceType {
