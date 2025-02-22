@@ -59,6 +59,7 @@ message IdentityInfo {
   string order_no = 4; // 订单号
   string table_no = 5; // 座位号
   int64 current_pos = 6; // 当前排队号
+  string transaction_id = 7; // 交易号
 }
 
 // 价格信息
