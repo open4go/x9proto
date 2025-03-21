@@ -51,6 +51,7 @@ message PayRequest {
   string desc = 3; // 订单描述
   int64 amount = 4; // 金额（单位：分）
   string at = 5; // 订单发生地点（门店ID；渠道：微信；...）
+  string transaction_id = 6; // 支付id
 }
 
 // 微信预支付响应
