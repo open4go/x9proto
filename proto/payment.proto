@@ -72,6 +72,7 @@ message RefundRequest {
   string reason = 2; // 原因
   string out_trade_refund_id = 3; // 退款单号
   int64 amount = 4; // 金额（单位：分）
+  int32 pay_channel = 5; // 支付渠道。0 仍是微信。拉卡拉为 2。缺省不能当成拉卡拉。
 }
 
 // 退款响应
